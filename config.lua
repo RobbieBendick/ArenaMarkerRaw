@@ -7,7 +7,7 @@ local Config = core.Config;
 local UIConfig;
 core.removedMarkers = {};
 core.translations = {
-    ["enUS"] = "The Arena battle has begun!",
+    ["enUS"] = "Fifteen seconds until the Arena battle begins!",
     ["enGB"] = "The Arena battle has begun!",
     ["frFR"] = "Le combat d'arène commence !",
     ["deDE"] = "Der Arenakampf hat begonnen!",

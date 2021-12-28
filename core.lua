@@ -3,8 +3,8 @@ core.AM = {};
 AM = core.AM;
 members = GetNumGroupMembers;
 local frame = CreateFrame("FRAME", "ArenaMarker")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("CHAT_MSG_BG_SYSTEM_NEUTRAL")
+frame:RegisterEvent("CHAT_MSG_SYSTEM");
 
 --[[
     Marker numbers:
@@ -96,25 +96,15 @@ function AM:MarkPets()
 	-- if members() > 5 then return end
     if UnitExists("pet") then
         if not GetRaidTargetIndex("pet") then
-            --check if prio marks are aviailable
-            if core.unused_markers[core.marker_strings[ArenaMarkerDB.petDropDownID]] then
-                SetRaidTarget("pet", ArenaMarkerDB.petDropDownID)
-                removeValue(unused_markers, core.marker_strings[ArenaMarkerDB.petDropDownID])
-            else
-                findUsableMark(core.unused_markers, "pet")
-            end
+            findUsableMark(core.unused_markers, "pet")
+            print("tryna mark my own pet")
         end
     end
     for i=1, 4 do
-         if UnitExists("party"..i.."pet") then
+        if UnitExists("party"..i.."pet") then
             if not GetRaidTargetIndex("party"..i.."pet") then
-                --check if prio marks are aviailable
-                if core.unused_markers[core.marker_strings[ArenaMarkerDB.petDropDownID]] then
-                    SetRaidTarget("party"..i.."pet", ArenaMarkerDB.petDropDownID)
-                    removeValue(unused_markers, core.marker_strings[ArenaMarkerDB.petDropDownID])
-                else
-                    findUsableMark(core.unused_markers, "party"..i.."pet")
-                end
+                findUsableMark(core.unused_markers, "party"..i.."pet")
+                print("tryna mark partypet"..i)
             end
         end
     end
@@ -166,7 +156,7 @@ function inArena(self, event, ...)
     -- if not UnitIsGroupLeader("player") and not UnitIsGroupAssistant("player") then return end
     -- if members() <= 1 then return end
     if event == "CHAT_MSG_BG_SYSTEM_NEUTRAL" then
-        a1 = ...
+        a1 = ...;
         AM.CheckExistingMarksOnPlayers()
         AM.MarkPlayers()
         AM.MarkPetsWhenGatesOpen()
