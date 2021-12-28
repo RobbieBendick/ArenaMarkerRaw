@@ -97,14 +97,12 @@ function AM:MarkPets()
     if UnitExists("pet") then
         if not GetRaidTargetIndex("pet") then
             findUsableMark(core.unused_markers, "pet")
-            print("tryna mark my own pet")
         end
     end
     for i=1, 4 do
         if UnitExists("party"..i.."pet") then
             if not GetRaidTargetIndex("party"..i.."pet") then
                 findUsableMark(core.unused_markers, "party"..i.."pet")
-                print("tryna mark partypet"..i)
             end
         end
     end
