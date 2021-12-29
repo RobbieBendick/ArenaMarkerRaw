@@ -76,7 +76,7 @@ function setRaidTargetByClass(target, ...)
 end
 
 function AM:MarkPlayers()
-    -- if not UnitIsGroupLeader("player") and not UnitIsGroupAssistant("player") then return end
+    if UnitIsPartyLeader("player") == nil then return end
 	-- if members() > 5 then return end
     -- mark self
     if not GetRaidTargetIndex("player") then
@@ -92,7 +92,7 @@ function AM:MarkPlayers()
 end
 
 function AM:MarkPets()
-    -- if not UnitIsGroupLeader("player") and not UnitIsGroupAssistant("player") then return end
+    if UnitIsPartyLeader("player") == nil then return end
 	-- if members() > 5 then return end
     if UnitExists("pet") then
         if not GetRaidTargetIndex("pet") then
@@ -151,7 +151,7 @@ end
 function inArena(self, event, ...)
     local inInstance, instanceType = IsInInstance()
     if instanceType ~= "arena" then return end
-    -- if not UnitIsGroupLeader("player") and not UnitIsGroupAssistant("player") then return end
+    if UnitIsPartyLeader("player") == nil then return end
     -- if members() <= 1 then return end
     if event == "CHAT_MSG_BG_SYSTEM_NEUTRAL" then
         a1 = ...;
