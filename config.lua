@@ -30,19 +30,19 @@ core.unused_markers = {
     ["skull"] = 8
 }
 core.marker_strings = {
-	"star",
-	"circle",
-	"diamond",
-	"triangle",
-	"moon",
-	"square",
-	"cross",
-	"skull"
+    "star",
+    "circle",
+    "diamond",
+    "triangle",
+    "moon",
+    "square",
+    "cross",
+    "skull"
 }
 
 
 local function login()
-	DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99ArenaMarker|r by |cff69CCF0Mageiden|r: loaded.");
+    DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99ArenaMarker|r by |cff69CCF0Mageiden|r: loaded.");
 end
 
 enterWorld = CreateFrame("FRAME");
