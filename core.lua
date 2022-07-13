@@ -5,6 +5,7 @@ members = GetNumGroupMembers;
 local frame = CreateFrame("FRAME", "ArenaMarker")
 frame:RegisterEvent("CHAT_MSG_BG_SYSTEM_NEUTRAL")
 frame:RegisterEvent("CHAT_MSG_SYSTEM");
+core.removed_markers = {};
 
 --[[
     Marker numbers:
@@ -28,11 +29,9 @@ core.relatives = {
     ["MAGE"] = "moon",
     ["SHAMAN"] = "square",
     ["WARRIOR"] = "cross",
-    ["PRIEST"] = "skull"
+    ["PRIEST"] = "skull",
+    ["DEATHKNIGHT"] = "skull"
 }
-
-
-
 
 function removeValue(table, value)
     local key = table[value]
@@ -47,30 +46,55 @@ function contains(table, x)
     return false
 end
 
-function findUsableMark(table, target)
+function AM:RepopulateUnusedMarkers()
+    -- re-populate table if user clicks remove_mark button(s)
+    for i, v in pairs(core.removed_markers) do
+        if not contains(core.unused_markers, v) then
+            for j = 1, #core.marker_strings do
+                if v == j then
+                    core.unused_markers[core.marker_strings[j]] = j;
+                    removeValue(core.removed_markers, i);
+                end
+            end
+        end
+    end
+end
+
+function AM:SetMarkerAndRemove(unit, marker_string)
+    if not unit or not core.unused_markers[marker_string] then return end
+    SetRaidTarget(unit, core.unused_markers[marker_string]);
+    removeValue(core.unused_markers, marker_string);
+end
+
+function tablelength(T)
+    local count = 0
+    for _ in pairs(T) do count = count + 1 end
+    return count
+end
+
+function AM:FindUsableMark(target)
     local marker = ""
-    for k, v in pairs(table) do
+    for k, v in pairs(core.unused_markers) do
         if v ~= nil then
             marker = k
             break
         end
     end
-    SetRaidTarget(target, table[marker])
-    removeValue(table, marker)
+    SetRaidTarget(target, core.unused_markers[marker])
+    removeValue(core.unused_markers, marker)
 end
 
-function setRaidTargetByClass(target, ...)
-    local _, englishClass, _ = UnitClass(target);
+function AM:SetRaidTargetByClass(unit, ...)
+    if not unit or GetRaidTargetIndex(unit) then return end
+    local _, englishClass, _ = UnitClass(unit);
     for k, v in pairs(core.relatives) do
         if k == englishClass then
             if core.unused_markers[v] then
-                SetRaidTarget(target, core.unused_markers[v])
-                removeValue(core.unused_markers, v)
-                break
+                AM:SetMarkerAndRemove(unit, v);
             else
-                findUsableMark(core.unused_markers, target)
-                break
+                AM:FindUsableMark(unit);
             end
+            break
         end
     end
 end
@@ -81,12 +105,12 @@ function AM:MarkPlayers()
     -- mark self
     if not GetRaidTargetIndex("player") then
         DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99ArenaMarker|r: Marking the group.")
-        setRaidTargetByClass("player")
+        AM:SetRaidTargetByClass("player")
     end
     -- mark party members
     for i = 1, 4 do
         if not GetRaidTargetIndex("party" .. i) then
-            setRaidTargetByClass("party" .. i)
+            AM:SetRaidTargetByClass("party" .. i)
         end
     end
 end
@@ -96,13 +120,13 @@ function AM:MarkPets()
     -- if members() > 5 then return end
     if UnitExists("pet") then
         if not GetRaidTargetIndex("pet") then
-            findUsableMark(core.unused_markers, "pet")
+            AM:FindUsableMark("pet")
         end
     end
     for i = 1, 4 do
         if UnitExists("party" .. i .. "pet") then
             if not GetRaidTargetIndex("party" .. i .. "pet") then
-                findUsableMark(core.unused_markers, "party" .. i .. "pet")
+                AM:FindUsableMark("party" .. i .. "pet")
             end
         end
     end
@@ -162,3 +186,6 @@ function inArena(self, event, ...)
 end
 
 frame:SetScript("OnEvent", inArena)
+
+-- move Target Frame Target of Target slightly to the right; personal implementation reason
+-- TargetFrameToT:SetPoint("RIGHT", TargetFrame, "RIGHT", -20, 0);
